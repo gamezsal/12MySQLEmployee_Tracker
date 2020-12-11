@@ -30,8 +30,8 @@ function trackerStart() {
           "Work with Roles",
           "Work with Employees"
       ]
-  }).then(function (res) {
-      switch (res.action) {
+  }).then(function (answer) {
+      switch (answer.action) {
           case "Work with Departments": {
               inquirer
                   .prompt({
@@ -43,8 +43,8 @@ function trackerStart() {
                           "Add a Department",
                           "Delete a Department"
                       ]
-                  }).then(function (res2) {
-                      switch (res2.action) {
+                  }).then(function (answer1) {
+                      switch (answer1.action) {
                           case "View All Departments":
                               viewDepartments();
                               break;
@@ -69,8 +69,8 @@ function trackerStart() {
                           "Add a Role",
                           "Delete a Role"
                       ]
-                  }).then(function (res3) {
-                      switch (res3.action) {
+                  }).then(function (answer2) {
+                      switch (answer2.action) {
                           case "View All Roles":
                               viewRoles();
                               break;
@@ -97,8 +97,8 @@ function trackerStart() {
                           "Update Employee Role",
                           "Delete an Employee"
                       ]
-                  }).then(function (res4) {
-                      switch (res4.action) {
+                  }).then(function (answer3) {
+                      switch (answer3.action) {
                           case "View All Employees":
                               viewEmployees()
                               break;
@@ -121,3 +121,14 @@ function trackerStart() {
       }
   })
 }
+
+
+//add Departments
+//add Roles
+//add Employees
+
+//view Departments
+//view Roles
+//view Employees
+
+//update Employees
