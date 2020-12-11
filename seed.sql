@@ -4,25 +4,25 @@ CREATE database employee_db;
 USE employee_db;
 
 CREATE TABLE employee (
-  position INT NOT NULL,
+  id INT AUTO_INCREMENT NOT NULL,
   first_name varchar(30),
   last_name varchar(30),
   role_id INT,
   manger_id INT,
-  PRIMARY KEY (position)
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE role (
-  position INT NOT NULL,
+  id INT AUTO_INCREMENT NOT NULL,
   title varchar(30),
-  salary decimal
+  salary decimal,
   department_id INT,
-  PRIMARY KEY (position)
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE department (
-  position INT NOT NULL,
+  id INT AUTO_INCREMENT NOT NULL,
   name varchar(30),
-  PRIMARY KEY (position)
+  PRIMARY KEY (id)
 );
 
