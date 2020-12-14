@@ -103,16 +103,16 @@ function trackerStart() {
                               viewEmployees()
                               break;
                               case "View Employees by Department":
-                              employeeByDept()
+                              employeesByDept();
                               break;
                           case "Add an Employee":
-                              addEmployee()
+                              addEmployee();
                               break;
                           case "Update Employee Role":
                               updateEmpRole();
                               break;
                           case "Delete an Employee":
-                              deleteEmployee()
+                              deleteEmployees()
                               break;
                       }
                   })
@@ -129,7 +129,7 @@ function addDepartments() {
 };
 
 function viewDepartment() {
-    connection.query("SELECT * FROM department", function (err, res) {
+    connection.query("SELECT * FROM departments", function (err, res) {
         if (err) throw err;
         console.table(res);
     })
@@ -142,7 +142,10 @@ function addRole() {
 };
 
 function viewRoles() {
-
+    connection.query("SELECT * FROM roles", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+    })
 };
 
 //Add and View Employees
@@ -150,8 +153,17 @@ function addEmployee() {
 
 };
 function viewEmployees() {
+    connection.query("SELECT * FROM employees", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+    })
+};
 
-}
+// view employees by department
+function employeesByDept() {
 
-
+};
 //update Employees
+function updateEmpRole() {
+
+};
