@@ -46,7 +46,7 @@ function trackerStart() {
                   }).then(function (answer1) {
                       switch (answer1.action) {
                           case "View All Departments":
-                              viewDepartments();
+                              viewDepartment();
                               break;
                           case "Add a Department":
                               addDepartments();
@@ -123,12 +123,35 @@ function trackerStart() {
 }
 
 
-//add Departments
-//add Roles
-//add Employees
+//Add and View Departments
+function addDepartments() {
 
-//view Departments
-//view Roles
-//view Employees
+};
+
+function viewDepartment() {
+    connection.query("SELECT * FROM department", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+    })
+
+};
+
+//Add and View Roles
+function addRole() {
+
+};
+
+function viewRoles() {
+
+};
+
+//Add and View Employees
+function addEmployee() {
+
+};
+function viewEmployees() {
+
+}
+
 
 //update Employees
