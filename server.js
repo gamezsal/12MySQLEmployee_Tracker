@@ -16,10 +16,10 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId + "\n");
-    trackerStart();
+    startTracker();
 });
 
-function trackerStart() {
+function startTracker() {
   inquirer
   .prompt({
       name: "action",
@@ -46,7 +46,7 @@ function trackerStart() {
                   }).then(function (answer1) {
                       switch (answer1.action) {
                           case "View All Departments":
-                              viewDepartment();
+                              viewDepartments();
                               break;
                           case "Add a Department":
                               addDepartments();
@@ -123,22 +123,64 @@ function trackerStart() {
 }
 
 
-//Add and View Departments
+//Add, View and Delete Departments
 function addDepartments() {
+    inquirer
+        .prompt({
+            name: "aName",
+            type: "input",
+            message: "What is the name of the department?"
+        }).then(function (response){
+            var sqlQuery = "INSERT INTO departments SET ?"
+            connection.query(sqlQuery, {name: response.aName }, function (err, res){
+                if (err) throw err;
+                console.log(res.rowsAffected + " Department Added!\n");
+                viewDepartments();
+            })
+        })
 
 };
 
-function viewDepartment() {
+function deleteDepartments() {
+    var viewDept;
+    connection.query("SELECT name FROM departments", function (err, res){
+        if (err) throw err;
+        var array = res.map(function (obj){
+            return obj.name;
+        });
+        viewDept = array;
+        console.log(viewDept)
+        inquirer
+            .prompt({
+                name: "dName",
+                type: "list",
+                message: "What is the name of the department you would like to delete?",
+                choices: viewDept
+            }).then(function (response){
+                console.log(response.dname)
+                var sqlQuery = "DELETE FROM departments WHERE ?"
+                connection.query(sqlQuery, { name: response.dname }, function (err, res){
+                    if (err) throw err;
+                    console.log(res.rowsAffected + "Department deleted!\n");
+                    viewDepartments();
+                });
+            });
+    })
+};
+
+function viewDepartments() {
     connection.query("SELECT * FROM departments", function (err, res) {
         if (err) throw err;
         console.table(res);
+        startOver();
     })
 
 };
 
+
+
 //Add and View Roles
 function addRole() {
-
 };
 
 function viewRoles() {
@@ -148,9 +190,12 @@ function viewRoles() {
     })
 };
 
-//Add and View Employees
-function addEmployee() {
-
+//Add, Delete and View Employees
+function addEmployee(employee) {
+    connection.query("INSERT INTO employees SET ?", employee, function (err, res) {
+        if (err) throw err;
+        console.table(res);
+    })   
 };
 function viewEmployees() {
     connection.query("SELECT * FROM employees", function (err, res) {
@@ -159,11 +204,38 @@ function viewEmployees() {
     })
 };
 
+//Delete Employee
+function deleteEmployees() {
+
+};
 // view employees by department
 function employeesByDept() {
 
 };
 //update Employees
 function updateEmpRole() {
-
+    viewEmployees();
+    connection.query("UPDATE ?  SET WHERE", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+    })
 };
+
+//Loop to Start Over
+function startOver(){
+    inquirer
+        .prompt({
+            name:  "over",
+            type: "confirm",
+            message: "Would you like to perform another action?"
+        }).then(function(response){
+            switch (response.over){
+                case true:
+                    startTracker();
+                    break;
+                case false:
+                    console.log("Enjoy the rest of the day!")
+                    connection.end();
+            }
+        })
+}
