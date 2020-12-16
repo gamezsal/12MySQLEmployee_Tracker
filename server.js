@@ -161,7 +161,7 @@ function deleteDepartments() {
                 var sqlQuery = "DELETE FROM departments WHERE ?"
                 connection.query(sqlQuery, { name: response.dname }, function (err, res){
                     if (err) throw err;
-                    console.log(res.rowsAffected + "Department deleted!\n");
+                    console.log(res.rowsAffected + " Department deleted!\n");
                     viewDepartments();
                 });
             });
@@ -179,14 +179,76 @@ function viewDepartments() {
 
 
 
-//Add and View Roles
+//Add, Delete and View Roles
 function addRole() {
+    var currentRole;
+    connection.query("SELECT name, id FROM departments", function (err, res) {
+        if (err) throw err;
+        var array = res.map(function (obj) {
+            return { name: obj.name, value: obj.id };
+        });
+        currentRole = array;
+        inquirer
+            .prompt([{
+                name:  "rName",
+                type: "input",
+                message: "What is the name of the role?"
+            },
+            {
+                name: "rDept",
+                type: "list",
+                message: "Which department does this role belong to?",
+                choices: currentRole
+
+            },
+            {
+                name: "rSalary",
+                type: "input",
+                message: "What is the salary on this role?"
+            }
+        ]).then(function (response){
+            var sqlQuery = "INSERT INTO roles SET ?"
+            connection.query(sqlQuery, { title: response.rName, salary: response.rSalary, department_id: response.rDept }, function (err, res){
+                if (err) throw err;
+                console.log(res.rowsAffected + " Role Added!\n");
+                viewRoles();
+            })
+        })
+    })
 };
+
+function deleteRole(){
+    var viewRole;
+    connection.query("SELECT title FROM roles", function (err, res){
+        if (err) throw err;
+        var array = res.map(function (obj){
+            return obj.title;
+        });
+        viewRole = array;
+        console.log(viewRole)
+        inquirer
+            .prompt({
+                name: "dRole",
+                type: "list",
+                message: "What is the name of the role you would like to delete?",
+                choices: viewRole
+            }).then(function (response){
+                console.log(response.dRole)
+                var sqlQuery = "DELETE FROM roles WHERE ?"
+                connection.query(sqlQuery, { title: response.dRole }, function (err, res){
+                    if (err) throw err;
+                    console.log(res.rowsAffected + " Role deleted!\n");
+                    viewRoles();
+                });
+            });
+    })
+}
 
 function viewRoles() {
     connection.query("SELECT * FROM roles", function (err, res) {
         if (err) throw err;
         console.table(res);
+        startOver();
     })
 };
 
