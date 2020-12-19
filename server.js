@@ -92,24 +92,16 @@ function startTracker() {
                       message: "What would you like to do with Employees?",
                       choices: [
                           "View All Employees",
-                          "View Employees by Department",
                           "Add an Employee",
-                          "Update Employee Role",
-                          "Delete an Employee"
+                          "Delete an Employee",
                       ]
                   }).then(function (answer3) {
                       switch (answer3.action) {
                           case "View All Employees":
                               viewEmployees()
                               break;
-                              case "View Employees by Department":
-                              employeesByDept();
-                              break;
                           case "Add an Employee":
                               addEmployee();
-                              break;
-                          case "Update Employee Role":
-                              updateEmpRole();
                               break;
                           case "Delete an Employee":
                               deleteEmployees()
@@ -143,13 +135,15 @@ function addDepartments() {
 
 function deleteDepartments() {
     var viewDept;
+
     connection.query("SELECT name FROM departments", function (err, res){
         if (err) throw err;
         var array = res.map(function (obj){
             return obj.name;
         });
+
         viewDept = array;
-        console.log(viewDept)
+
         inquirer
             .prompt({
                 name: "dName",
@@ -182,11 +176,13 @@ function viewDepartments() {
 //Add, Delete and View Roles
 function addRole() {
     var currentRole;
+
     connection.query("SELECT name, id FROM departments", function (err, res) {
         if (err) throw err;
         var array = res.map(function (obj) {
             return { name: obj.name, value: obj.id };
         });
+
         currentRole = array;
         inquirer
             .prompt([{
@@ -219,13 +215,15 @@ function addRole() {
 
 function deleteRole(){
     var viewRole;
+
     connection.query("SELECT title FROM roles", function (err, res){
         if (err) throw err;
         var array = res.map(function (obj){
             return obj.title;
         });
+
         viewRole = array;
-        console.log(viewRole)
+
         inquirer
             .prompt({
                 name: "dRole",
@@ -253,34 +251,93 @@ function viewRoles() {
 };
 
 //Add, Delete and View Employees
-function addEmployee(employee) {
-    connection.query("INSERT INTO employees SET ?", employee, function (err, res) {
+function addEmployee() {
+    var currentEmployees
+    var currentRoles
+
+    connection.query("Select title, id from roles", function (err, res){
         if (err) throw err;
-        console.table(res);
-    })   
+        var cArray = res.map(function (obj){
+            return { name: obj.title, value: obj.id };
+        });
+        currentRoles = cArray;
+    })
+    connection.query("SELECT first_name, last_name, id FROM employees", function (err, res) {
+        if (err) throw err;
+        var eArray = res.map(function (obj) {
+            return { name: obj.first_name + " " + obj.last_name, value: obj.id };
+        });
+
+        currentEmployees = eArray;
+
+        inquirer
+            .prompt([{
+                name:  "fName",
+                type: "input",
+                message: "What is the first name of the new employee?"
+            },
+            {
+                name: "lName",
+                type: "input",
+                message: "What is the last name of the new employee?",
+            },
+            {
+                name: "eRole",
+                type: "list",
+                message: "What is the role of this new employee?",
+                choices: currentRoles,
+            },
+            {
+                name: "eManager",
+                type: "list",
+                message: "Who will be the employees manager?",
+                choices: currentEmployees,
+            },
+        ]).then(function (response){
+            var sqlQuery = "INSERT INTO employees SET ?"
+            connection.query(sqlQuery, { first_name: response.fName, last_name: response.lName, role_id: response.eRole, manager_id: response.eManager}, function (err, res){
+                if (err) throw err;
+                console.log(res.rowsAffected + " Employee has been added!\n");
+                viewEmployees();
+            });
+        });
+    });
 };
 function viewEmployees() {
     connection.query("SELECT * FROM employees", function (err, res) {
         if (err) throw err;
         console.table(res);
+        startOver();
     })
 };
 
 //Delete Employee
 function deleteEmployees() {
-
-};
-// view employees by department
-function employeesByDept() {
-
-};
-//update Employees
-function updateEmpRole() {
-    viewEmployees();
-    connection.query("UPDATE ?  SET WHERE", function (err, res) {
+    var viewEmployees
+    connection.query("SELECT first_name FROM employees", function (err, res){
         if (err) throw err;
-        console.table(res);
-    })
+        var array = res.map(function (obj){
+            return obj.first_name;
+        });
+        viewEmployees = array;
+        console.log(viewEmployees)
+        inquirer
+            .prompt({
+                name: "dEmp",
+                type: "list",
+                message: "What is the name of the employee you would like to delete?",
+                choices: viewEmployees
+            }).then(function (response){
+                console.log(response.dEmp)
+                var sqlQuery = "DELETE FROM employees WHERE ?"
+                connection.query(sqlQuery, { first_name: response.dEmp }, function (err, res){
+                    if (err) throw err;
+                    console.log(res.rowsAffected + " Employee deleted!\n");
+                    startOver();
+                });
+            });
+        });
+
 };
 
 //Loop to Start Over
