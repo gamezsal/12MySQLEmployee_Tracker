@@ -94,6 +94,7 @@ function startTracker() {
                           "View All Employees",
                           "Add an Employee",
                           "Delete an Employee",
+                          "Update Employee Role",
                       ]
                   }).then(function (answer3) {
                       switch (answer3.action) {
@@ -101,11 +102,14 @@ function startTracker() {
                               viewEmployees()
                               break;
                           case "Add an Employee":
-                              addEmployee();
+                              addEmployee()
                               break;
                           case "Delete an Employee":
                               deleteEmployees()
                               break;
+                          case "Update Employee Role":
+                            updateRole()
+                            break;
                       }
                   })
           }
@@ -341,8 +345,55 @@ function deleteEmployees() {
 
 };
 
+//Update Employee Role
+function updateRole() {
+    var currentEmployees
+    var currentRoles
+
+    connection.query("Select title, id from roles", function (err, res){
+        if (err) throw err;
+        var cArray = res.map(function (obj){
+            return { name: obj.title, value: obj.id };
+        });
+        currentRoles = cArray;
+    })
+    connection.query("SELECT first_name, last_name, id FROM employees", function (err, res) {
+        if (err) throw err;
+        var eArray = res.map(function (obj) {
+            return { name: obj.first_name + " " + obj.last_name, value: obj.id };
+        });
+
+        currentEmployees = eArray;
+
+        inquirer
+            .prompt([
+                {
+                    name:  "eName",
+                    type: "list",
+                    message: "Who should be changing roles?",
+                    choices: currentEmployees
+                },
+                {
+                    name: "nRole",
+                    type: "list",
+                    message: "What is their new Role?",
+                    choices: currentRoles
+                }
+            ]).then(function (response) {
+                var sqlQuery = "UPDATE employees SET ? WHERE ?";
+                connection.query(sqlQuery, [{role_id: response.nRole }, {id: response.eName}], function (err, res){
+                    if (err) throw err;
+                    console.log(res.affectedRows + " Role has been Changed!\n");
+                    viewEmployees()
+                })
+
+            })
+        });
+    };    
+
+
 //Loop to Start Over
-function startOver(){
+function startOver() {
     inquirer
         .prompt({
             name:  "over",
