@@ -126,7 +126,7 @@ function addDepartments() {
             var sqlQuery = "INSERT INTO departments SET ?"
             connection.query(sqlQuery, {name: response.aName }, function (err, res){
                 if (err) throw err;
-                console.log(res.rowsAffected + " Department Added!\n");
+                console.log(res.affectedRows + " Department Added!\n");
                 viewDepartments();
             })
         })
@@ -155,7 +155,7 @@ function deleteDepartments() {
                 var sqlQuery = "DELETE FROM departments WHERE ?"
                 connection.query(sqlQuery, { name: response.dName }, function (err, res){
                     if (err) throw err;
-                    console.log(res.rowsAffected + " Department deleted!\n");
+                    console.log(res.affectedRows + " Department deleted!\n");
                     viewDepartments();
                 });
             });
@@ -206,7 +206,7 @@ function addRole() {
             var sqlQuery = "INSERT INTO roles SET ?"
             connection.query(sqlQuery, { title: response.rName, salary: response.rSalary, department_id: response.rDept }, function (err, res){
                 if (err) throw err;
-                console.log(res.rowsAffected + " Role Added!\n");
+                console.log(res.affectedRows + " Role Added!\n");
                 viewRoles();
             })
         })
@@ -235,7 +235,7 @@ function deleteRole(){
                 var sqlQuery = "DELETE FROM roles WHERE ?"
                 connection.query(sqlQuery, { title: response.dRole }, function (err, res){
                     if (err) throw err;
-                    console.log(res.rowsAffected + " Role deleted!\n");
+                    console.log(res.affectedRows + " Role deleted!\n");
                     viewRoles();
                 });
             });
@@ -297,7 +297,7 @@ function addEmployee() {
             var sqlQuery = "INSERT INTO employees SET ?"
             connection.query(sqlQuery, { first_name: response.fName, last_name: response.lName, role_id: response.eRole, manager_id: response.eManager}, function (err, res){
                 if (err) throw err;
-                console.log(res.rowsAffected + " Employee has been added!\n");
+                console.log(res.affectedRows + " Employee has been added!\n");
                 viewEmployees();
             });
         });
@@ -313,26 +313,27 @@ function viewEmployees() {
 
 //Delete Employee
 function deleteEmployees() {
-    var viewEmployees
-    connection.query("SELECT first_name FROM employees", function (err, res){
+    var currentEmployees
+    connection.query("SELECT first_name, last_name, id FROM employees", function (err, res){
         if (err) throw err;
         var array = res.map(function (obj){
-            return obj.first_name;
+            return { name: obj.first_name + " " + obj.last_name, value: obj.id };
         });
-        viewEmployees = array;
-        
+
+        currentEmployees = array;
+
         inquirer
             .prompt({
                 name: "dEmp",
                 type: "list",
                 message: "What is the name of the employee you would like to delete?",
-                choices: viewEmployees
+                choices: currentEmployees
             }).then(function (response){
                 console.log(response.dEmp)
                 var sqlQuery = "DELETE FROM employees WHERE ?"
-                connection.query(sqlQuery, { first_name: response.dEmp }, function (err, res){
+                connection.query(sqlQuery, { id: response.dEmp }, function (err, res){
                     if (err) throw err;
-                    console.log(res.rowsAffected + " Employee deleted!\n");
+                    console.log(res.affectedRows + " Employee deleted!\n");
                     startOver();
                 });
             });
