@@ -151,9 +151,9 @@ function deleteDepartments() {
                 message: "What is the name of the department you would like to delete?",
                 choices: viewDept
             }).then(function (response){
-                console.log(response.dname)
+                console.log(response.dName)
                 var sqlQuery = "DELETE FROM departments WHERE ?"
-                connection.query(sqlQuery, { name: response.dname }, function (err, res){
+                connection.query(sqlQuery, { name: response.dName }, function (err, res){
                     if (err) throw err;
                     console.log(res.rowsAffected + " Department deleted!\n");
                     viewDepartments();
@@ -320,7 +320,7 @@ function deleteEmployees() {
             return obj.first_name;
         });
         viewEmployees = array;
-        console.log(viewEmployees)
+        
         inquirer
             .prompt({
                 name: "dEmp",
