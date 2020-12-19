@@ -129,9 +129,9 @@ We would like you to have well over 200 commits by graduation, so commit early a
 
 You are required to submit the following:
 
-* The URL of the GitHub repository
+* The URL of the GitHub repository: https://github.com/gamezsal/12MySQLEmployee_Tracker
 
-* A video demonstrating the entirety of the app's functionality 
+* A video demonstrating the entirety of the app's functionality: https://drive.google.com/file/d/1YUpVR-wo4bl-kht8MeODoO4OswBsUx5p/view
 
 - - -
 © 2019 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.
